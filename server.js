@@ -1,60 +1,303 @@
 const express = require("express");
+
 const path = require("path");
+
 const multer = require("multer");
 
+const Stripe = require("stripe");
+
 const app = express();
+
 const PORT = process.env.PORT || 3000;
 
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
 app.use(express.json());
+
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, "public")));
 
 const upload = multer({
+
   dest: "/tmp/layer3dpost/",
+
   limits: {
+
     fileSize: 100 * 1024 * 1024
+
   },
+
   fileFilter: (req, file, cb) => {
+
     const name = file.originalname.toLowerCase();
 
     if (name.endsWith(".stl") || name.endsWith(".3mf")) {
+
       cb(null, true);
+
     } else {
+
       cb(new Error("Only STL and 3MF files are accepted."));
+
     }
+
   }
+
 });
 
 app.post("/api/upload", upload.single("model"), (req, res) => {
+
   if (!req.file) {
+
     return res.status(400).json({
+
       success: false,
+
       error: "No model file uploaded."
+
     });
+
   }
 
   res.json({
+
     success: true,
+
     filename: req.file.originalname,
+
     uploadId: req.file.filename
+
   });
+
+});
+
+/* -------------------------------
+
+   STRIPE CHECKOUT
+
+-------------------------------- */
+
+app.post("/api/create-checkout-session", async (req, res) => {
+
+  try {
+
+    const { basket } = req.body;
+
+    if (!Array.isArray(basket) || basket.length === 0) {
+
+      return res.status(400).json({
+
+        error: "Basket is empty."
+
+      });
+
+    }
+
+    /*
+
+      IMPORTANT:
+
+      We calculate prices again on the server.
+
+      We do NOT trust prices sent by the browser.
+
+    */
+
+    const materialMultipliers = {
+
+      "PLA": 1,
+
+      "PETG": 1.25,
+
+      "TPU": 1.45,
+
+      "PLA-CF": 1.6
+
+    };
+
+    const qualityMultipliers = {
+
+      "Standard": 1,
+
+      "Fine": 1.25,
+
+      "High detail": 1.5
+
+    };
+
+    const basePrice = 9.95;
+
+    const lineItems = basket.map(item => {
+
+      const materialMultiplier =
+
+        materialMultipliers[item.material];
+
+      const qualityMultiplier =
+
+        qualityMultipliers[item.quality];
+
+      const quantity =
+
+        Math.max(
+
+          1,
+
+          Math.min(100, Number(item.quantity) || 1)
+
+        );
+
+      if (!materialMultiplier || !qualityMultiplier) {
+
+        throw new Error("Invalid print configuration.");
+
+      }
+
+      const unitPrice =
+
+        basePrice *
+
+        materialMultiplier *
+
+        qualityMultiplier;
+
+      const unitAmount =
+
+        Math.round(unitPrice * 100);
+
+      return {
+
+        price_data: {
+
+          currency: "gbp",
+
+          product_data: {
+
+            name: item.filename,
+
+            description:
+
+              ${item.material} · ${item.colour} · ${item.quality}
+
+          },
+
+          unit_amount: unitAmount
+
+        },
+
+        quantity: quantity
+
+      };
+
+    });
+
+    /*
+
+      UK tracked delivery
+
+    */
+
+    lineItems.push({
+
+      price_data: {
+
+        currency: "gbp",
+
+        product_data: {
+
+          name: "UK Tracked Delivery"
+
+        },
+
+        unit_amount: 449
+
+      },
+
+      quantity: 1
+
+    });
+
+    const session = await stripe.checkout.sessions.create({
+
+      mode: "payment",
+
+      line_items: lineItems,
+
+      success_url:
+
+        ${req.protocol}://${req.get("host")}/?payment=success,
+
+      cancel_url:
+
+        ${req.protocol}://${req.get("host")}/?payment=cancelled,
+
+      billing_address_collection: "required",
+
+      shipping_address_collection: {
+
+        allowed_countries: ["GB"]
+
+      },
+
+      customer_creation: "always"
+
+    });
+
+    res.json({
+
+      url: session.url
+
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+
+      error:
+
+        error.message ||
+
+        "Unable to create checkout."
+
+    });
+
+  }
+
 });
 
 app.get("/health", (req, res) => {
+
   res.json({
+
     status: "ok",
+
     service: "Layer3DPost"
+
   });
+
 });
 
 app.use((err, req, res, next) => {
+
   res.status(400).json({
+
     success: false,
+
     error: err.message
+
   });
+
 });
 
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Layer3DPost running on port ${PORT}`);
+
+  console.log(
+
+    Layer3DPost running on port ${PORT}
+
+  );
+
 });
