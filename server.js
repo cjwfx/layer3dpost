@@ -26,7 +26,7 @@ const upload = multer({
 
   },
 
-  fileFilter: (req, file, cb) => {
+  fileFilter: function (req, file, cb) {
 
     const name = file.originalname.toLowerCase();
 
@@ -44,7 +44,7 @@ const upload = multer({
 
 });
 
-app.post("/api/upload", upload.single("model"), (req, res) => {
+app.post("/api/upload", upload.single("model"), function (req, res) {
 
   if (!req.file) {
 
@@ -70,7 +70,7 @@ app.post("/api/upload", upload.single("model"), (req, res) => {
 
 });
 
-app.post("/api/create-checkout-session", async (req, res) => {
+app.post("/api/create-checkout-session", async function (req, res) {
 
   try {
 
@@ -86,7 +86,7 @@ app.post("/api/create-checkout-session", async (req, res) => {
 
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-    const { basket } = req.body;
+    const basket = req.body.basket;
 
     if (!Array.isArray(basket) || basket.length === 0) {
 
@@ -122,7 +122,7 @@ app.post("/api/create-checkout-session", async (req, res) => {
 
     const basePrice = 9.95;
 
-    const lineItems = basket.map((item) => {
+    const lineItems = basket.map(function (item) {
 
       const materialMultiplier =
 
@@ -166,7 +166,15 @@ app.post("/api/create-checkout-session", async (req, res) => {
 
             description:
 
-              ${item.material} · ${item.colour} · ${item.quality}
+              item.material +
+
+              " · " +
+
+              item.colour +
+
+              " · " +
+
+              item.quality
 
           },
 
@@ -174,7 +182,7 @@ app.post("/api/create-checkout-session", async (req, res) => {
 
         },
 
-        quantity
+        quantity: quantity
 
       };
 
@@ -200,6 +208,10 @@ app.post("/api/create-checkout-session", async (req, res) => {
 
     });
 
+    const baseUrl =
+
+      req.protocol + "://" + req.get("host");
+
     const session =
 
       await stripe.checkout.sessions.create({
@@ -210,11 +222,11 @@ app.post("/api/create-checkout-session", async (req, res) => {
 
         success_url:
 
-          ${req.protocol}://${req.get("host")}/?payment=success,
+          baseUrl + "/?payment=success",
 
         cancel_url:
 
-          ${req.protocol}://${req.get("host")}/?payment=cancelled,
+          baseUrl + "/?payment=cancelled",
 
         billing_address_collection: "required",
 
@@ -252,7 +264,7 @@ app.post("/api/create-checkout-session", async (req, res) => {
 
 });
 
-app.get("/health", (req, res) => {
+app.get("/health", function (req, res) {
 
   res.json({
 
@@ -264,7 +276,7 @@ app.get("/health", (req, res) => {
 
 });
 
-app.use((err, req, res, next) => {
+app.use(function (err, req, res, next) {
 
   console.error(err);
 
@@ -278,8 +290,12 @@ app.use((err, req, res, next) => {
 
 });
 
-app.listen(PORT, "0.0.0.0", () => {
+app.listen(PORT, "0.0.0.0", function () {
 
-  console.log(Layer3DPost running on port ${PORT});
+  console.log(
+
+    "Layer3DPost running on port " + PORT
+
+  );
 
 });
