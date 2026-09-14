@@ -946,11 +946,7 @@ footer {
 
       <h3>PLA</h3>
 
-      <p>
-
-        Excellent for prototypes, models and everyday parts.
-
-      </p>
+      <p>Excellent for prototypes, models and everyday parts.</p>
 
     </div>
 
@@ -960,11 +956,7 @@ footer {
 
       <h3>PETG</h3>
 
-      <p>
-
-        Durable with improved heat and moisture resistance.
-
-      </p>
+      <p>Durable with improved heat and moisture resistance.</p>
 
     </div>
 
@@ -974,11 +966,7 @@ footer {
 
       <h3>TPU</h3>
 
-      <p>
-
-        Flexible material for grips, covers and compliant parts.
-
-      </p>
+      <p>Flexible material for grips, covers and compliant parts.</p>
 
     </div>
 
@@ -988,11 +976,7 @@ footer {
 
       <h3>PLA-CF</h3>
 
-      <p>
-
-        Carbon-fibre reinforced PLA with a premium technical finish.
-
-      </p>
+      <p>Carbon-fibre reinforced PLA with a premium technical finish.</p>
 
     </div>
 
@@ -1006,11 +990,7 @@ footer {
 
     <h2>Get an instant estimate</h2>
 
-    <p>
-
-      Upload your model and configure your print.
-
-    </p>
+    <p>Upload your model and configure your print.</p>
 
   </div>
 
@@ -1048,29 +1028,13 @@ footer {
 
           <select id="material">
 
-            <option value="1">
+            <option value="1">PLA</option>
 
-              PLA
+            <option value="1.25">PETG</option>
 
-            </option>
+            <option value="1.45">TPU</option>
 
-            <option value="1.25">
-
-              PETG
-
-            </option>
-
-            <option value="1.45">
-
-              TPU
-
-            </option>
-
-            <option value="1.6">
-
-              PLA-CF
-
-            </option>
+            <option value="1.6">PLA-CF</option>
 
           </select>
 
@@ -1086,23 +1050,11 @@ footer {
 
           <select id="colour">
 
-            <option>
+            <option>Black</option>
 
-              Black
+            <option>White</option>
 
-            </option>
-
-            <option>
-
-              White
-
-            </option>
-
-            <option>
-
-              Other colour — subject to availability
-
-            </option>
+            <option>Other colour — subject to availability</option>
 
           </select>
 
@@ -1118,23 +1070,11 @@ footer {
 
           <select id="quality">
 
-            <option value="1">
+            <option value="1">Standard</option>
 
-              Standard
+            <option value="1.25">Fine</option>
 
-            </option>
-
-            <option value="1.25">
-
-              Fine
-
-            </option>
-
-            <option value="1.5">
-
-              High detail
-
-            </option>
+            <option value="1.5">High detail</option>
 
           </select>
 
@@ -1220,17 +1160,9 @@ footer {
 
   <div class="section-title">
 
-    <h2>
+    <h2>From file to front door</h2>
 
-      From file to front door
-
-    </h2>
-
-    <p>
-
-      A straightforward UK 3D printing service.
-
-    </p>
+    <p>A straightforward UK 3D printing service.</p>
 
   </div>
 
@@ -1240,17 +1172,9 @@ footer {
 
       <b>01</b>
 
-      <h3>
+      <h3>Upload</h3>
 
-        Upload
-
-      </h3>
-
-      <p>
-
-        Send us your STL or 3MF model.
-
-      </p>
+      <p>Send us your STL or 3MF model.</p>
 
     </div>
 
@@ -1258,17 +1182,9 @@ footer {
 
       <b>02</b>
 
-      <h3>
+      <h3>We print</h3>
 
-        We print
-
-      </h3>
-
-      <p>
-
-        Your order is prepared and professionally 3D printed.
-
-      </p>
+      <p>Your order is prepared and professionally 3D printed.</p>
 
     </div>
 
@@ -1276,17 +1192,9 @@ footer {
 
       <b>03</b>
 
-      <h3>
+      <h3>We deliver</h3>
 
-        We deliver
-
-      </h3>
-
-      <p>
-
-        Your finished parts are packed and dispatched within the UK.
-
-      </p>
+      <p>Your finished parts are packed and dispatched within the UK.</p>
 
     </div>
 
@@ -1328,11 +1236,7 @@ footer {
 
     <div class="basket-header">
 
-      <h2>
-
-        Your basket
-
-      </h2>
+      <h2>Your basket</h2>
 
       <button
 
@@ -1362,11 +1266,7 @@ footer {
 
     <div class="basket-total">
 
-      <strong>
-
-        Total
-
-      </strong>
+      <strong>Total</strong>
 
       <strong id="basketTotal">
 
@@ -1379,6 +1279,8 @@ footer {
     <button
 
       type="button"
+
+      id="checkoutButton"
 
       class="button checkout-button"
 
@@ -1526,9 +1428,7 @@ async function addToBasket() {
 
   button.disabled = true;
 
-  button.textContent =
-
-    "Uploading...";
+  button.textContent = "Uploading...";
 
   try {
 
@@ -1708,13 +1608,9 @@ async function addToBasket() {
 
   finally {
 
-    button.disabled =
+    button.disabled = false;
 
-      false;
-
-    button.textContent =
-
-      "Add to basket →";
+    button.textContent = "Add to basket →";
 
   }
 
@@ -1772,67 +1668,73 @@ function updateBasket() {
 
       .map(
 
-        (item, index) => `
+        function(item, index) {
 
-        <div class="basket-item">
+          return (
 
-          <div class="basket-item-info">
+            '<div class="basket-item">' +
 
-            <strong class="basket-filename">
+              '<div class="basket-item-info">' +
 
-              ${escapeHtml(item.filename)}
+                '<strong class="basket-filename">' +
 
-            </strong>
+                  escapeHtml(item.filename) +
 
-            <div class="basket-details">
+                '</strong>' +
 
-              ${escapeHtml(item.material)}
+                '<div class="basket-details">' +
 
-              ·
+                  escapeHtml(item.material) +
 
-              ${escapeHtml(item.colour)}
+                  ' · ' +
 
-              ·
+                  escapeHtml(item.colour) +
 
-              ${escapeHtml(item.quality)}
+                  ' · ' +
 
-              ·
+                  escapeHtml(item.quality) +
 
-              Qty ${item.quantity}
+                  ' · Qty ' +
 
-            </div>
+                  item.quantity +
 
-          </div>
+                '</div>' +
 
-          <div class="basket-price-area">
+              '</div>' +
 
-            <strong>
+              '<div class="basket-price-area">' +
 
-              £${item.price.toFixed(2)}
+                '<strong>£' +
 
-            </strong>
+                  item.price.toFixed(2) +
 
-            <br>
+                '</strong>' +
 
-            <button
+                '<br>' +
 
-              type="button"
+                '<button ' +
 
-              class="remove-button"
+                  'type="button" ' +
 
-              onclick="removeBasketItem(${index})"
+                  'class="remove-button" ' +
 
-            >
+                  'onclick="removeBasketItem(' +
 
-              Remove
+                  index +
 
-            </button>
+                  ')">' +
 
-          </div>
+                  'Remove' +
 
-        </div>
+                '</button>' +
 
-      `
+              '</div>' +
+
+            '</div>'
+
+          );
+
+        }
 
       )
 
@@ -1842,9 +1744,11 @@ function updateBasket() {
 
     basket.reduce(
 
-      (sum, item) =>
+      function(sum, item) {
 
-        sum + item.price,
+        return sum + item.price;
+
+      },
 
       0
 
@@ -1924,8 +1828,6 @@ function closeBasket() {
 
 }
 
-/* close basket if background clicked */
-
 document
 
   .getElementById("basketPanel")
@@ -1952,11 +1854,11 @@ document
 
 /* ----------------------------------------
 
-   CHECKOUT
+   STRIPE CHECKOUT
 
 ---------------------------------------- */
 
-function basketCheckout() {
+async function basketCheckout() {
 
   if (
 
@@ -1974,11 +1876,101 @@ function basketCheckout() {
 
   }
 
-  alert(
+  const checkoutButton =
 
-    "Your basket is working correctly.\n\nStripe Checkout will be connected next."
+    document.getElementById(
 
-  );
+      "checkoutButton"
+
+    );
+
+  checkoutButton.disabled = true;
+
+  checkoutButton.textContent =
+
+    "Opening secure checkout...";
+
+  try {
+
+    const response =
+
+      await fetch(
+
+        "/api/create-checkout-session",
+
+        {
+
+          method: "POST",
+
+          headers: {
+
+            "Content-Type":
+
+              "application/json"
+
+          },
+
+          body: JSON.stringify({
+
+            basket: basket
+
+          })
+
+        }
+
+      );
+
+    const result =
+
+      await response.json();
+
+    if (!response.ok) {
+
+      throw new Error(
+
+        result.error ||
+
+        "Unable to start checkout."
+
+      );
+
+    }
+
+    if (!result.url) {
+
+      throw new Error(
+
+        "Stripe checkout URL was not returned."
+
+      );
+
+    }
+
+    window.location.href =
+
+      result.url;
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    alert(
+
+      error.message ||
+
+      "Unable to start checkout. Please try again."
+
+    );
+
+    checkoutButton.disabled = false;
+
+    checkoutButton.textContent =
+
+      "Checkout securely →";
+
+  }
 
 }
 
