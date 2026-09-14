@@ -339,74 +339,102 @@ Layer3dpost@outlook.com<br><br>
 
 <script>
 
-function updatePrice(){
+function updatePrice() {
 
-const material=Number(document.getElementById("material").value);
+  const material = Number(document.getElementById("material").value);
 
-const quality=Number(document.getElementById("quality").value);
+  const quality = Number(document.getElementById("quality").value);
 
-const quantity=Math.max(1,Number(document.getElementById("quantity").value)||1);
+  const quantity = Math.max(
 
-const price=(9.95*material*quality*quantity).toFixed(2);
+    1,
 
-document.getElementById("price").textContent="£"+price;
+    Number(document.getElementById("quantity").value) || 1
+
+  );
+
+  const price = (9.95 * material * quality * quantity).toFixed(2);
+
+  document.getElementById("price").textContent = "£" + price;
 
 }
 
-document.getElementById("material").addEventListener("change",updatePrice);
+document.getElementById("material").addEventListener("change", updatePrice);
 
-document.getElementById("quality").addEventListener("change",updatePrice);
+document.getElementById("quality").addEventListener("change", updatePrice);
 
-document.getElementById("quantity").addEventListener("input",updatePrice);
+document.getElementById("quantity").addEventListener("input", updatePrice);
 
 async function checkout() {
+
   const fileInput = document.getElementById("file");
-  const button = document.getElementById("continueButton");
+
   const file = fileInput.files[0];
 
   if (!file) {
+
     alert("Please upload your STL or 3MF file first.");
+
     return;
+
   }
 
   const filename = file.name.toLowerCase();
 
   if (!filename.endsWith(".stl") && !filename.endsWith(".3mf")) {
+
     alert("Only STL and 3MF files are accepted.");
+
     fileInput.value = "";
+
     return;
+
   }
 
+  const button = document.getElementById("continueButton");
+
   button.disabled = true;
+
   button.textContent = "Uploading...";
 
-  const formData = new FormData();
-  formData.append("model", file);
-
   try {
+
+    const formData = new FormData();
+
+    formData.append("model", file);
+
     const response = await fetch("/api/upload", {
+
       method: "POST",
+
       body: formData
+
     });
 
     const result = await response.json();
 
     if (!response.ok) {
-      alert(result.error || "Upload failed.");
-      return;
+
+      throw new Error(result.error || "Upload failed.");
+
     }
 
-    alert(
-      "Upload successful!\n\n" +
-      result.filename +
-      "\n\nWe can now connect Stripe checkout."
-    );
+    alert("Model uploaded successfully: " + result.filename);
 
   } catch (error) {
+
     console.error(error);
-    alert("Upload failed. Please try again.");
+
+    alert(error.message || "Upload failed. Please try again.");
+
   } finally {
+
     button.disabled = false;
+
     button.textContent = "Continue →";
+
   }
+
 }
+
+</script>
