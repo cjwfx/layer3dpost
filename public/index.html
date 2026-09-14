@@ -536,6 +536,56 @@ footer {
 
 }
 
+/* PAYMENT RETURN MESSAGE */
+
+#paymentMessage {
+
+  display: none;
+
+  padding: 0 6%;
+
+}
+
+.payment-message-box {
+
+  max-width: 900px;
+
+  margin: 25px auto 0;
+
+  padding: 24px;
+
+  border-radius: 14px;
+
+  text-align: center;
+
+}
+
+.payment-success {
+
+  background: #132318;
+
+  border: 1px solid #2f6b3d;
+
+  color: #dfffe7;
+
+}
+
+.payment-cancelled {
+
+  background: #241a14;
+
+  border: 1px solid #6e4b30;
+
+  color: #ffe8d5;
+
+}
+
+.payment-message-box h2 {
+
+  margin-bottom: 8px;
+
+}
+
 /* BASKET */
 
 #basketPanel {
@@ -825,6 +875,8 @@ footer {
 </head>
 
 <body>
+
+<div id="paymentMessage"></div>
 
 <header>
 
@@ -1306,6 +1358,44 @@ footer {
 
 let basket = [];
 
+try {
+
+  const savedBasket =
+
+    localStorage.getItem("layer3dpostBasket");
+
+  if (savedBasket) {
+
+    basket = JSON.parse(savedBasket);
+
+  }
+
+  if (!Array.isArray(basket)) {
+
+    basket = [];
+
+  }
+
+}
+
+catch (error) {
+
+  basket = [];
+
+}
+
+function saveBasket() {
+
+  localStorage.setItem(
+
+    "layer3dpostBasket",
+
+    JSON.stringify(basket)
+
+  );
+
+}
+
 /* ----------------------------------------
 
    PRICE CALCULATOR
@@ -1344,9 +1434,15 @@ function calculateCurrentPrice() {
 
 function updatePrice() {
 
-  const price = calculateCurrentPrice();
+  const price =
 
-  document.getElementById("price").textContent =
+    calculateCurrentPrice();
+
+  document
+
+    .getElementById("price")
+
+    .textContent =
 
     "£" + price.toFixed(2);
 
@@ -1356,19 +1452,37 @@ document
 
   .getElementById("material")
 
-  .addEventListener("change", updatePrice);
+  .addEventListener(
+
+    "change",
+
+    updatePrice
+
+  );
 
 document
 
   .getElementById("quality")
 
-  .addEventListener("change", updatePrice);
+  .addEventListener(
+
+    "change",
+
+    updatePrice
+
+  );
 
 document
 
   .getElementById("quantity")
 
-  .addEventListener("input", updatePrice);
+  .addEventListener(
+
+    "input",
+
+    updatePrice
+
+  );
 
 /* ----------------------------------------
 
@@ -1424,11 +1538,17 @@ async function addToBasket() {
 
   const button =
 
-    document.getElementById("continueButton");
+    document.getElementById(
+
+      "continueButton"
+
+    );
 
   button.disabled = true;
 
-  button.textContent = "Uploading...";
+  button.textContent =
+
+    "Uploading...";
 
   try {
 
@@ -1478,19 +1598,35 @@ async function addToBasket() {
 
     const materialElement =
 
-      document.getElementById("material");
+      document.getElementById(
+
+        "material"
+
+      );
 
     const qualityElement =
 
-      document.getElementById("quality");
+      document.getElementById(
+
+        "quality"
+
+      );
 
     const colourElement =
 
-      document.getElementById("colour");
+      document.getElementById(
+
+        "colour"
+
+      );
 
     const quantityElement =
 
-      document.getElementById("quantity");
+      document.getElementById(
+
+        "quantity"
+
+      );
 
     const material =
 
@@ -1578,6 +1714,8 @@ async function addToBasket() {
 
     });
 
+    saveBasket();
+
     updateBasket();
 
     fileInput.value = "";
@@ -1608,9 +1746,13 @@ async function addToBasket() {
 
   finally {
 
-    button.disabled = false;
+    button.disabled =
 
-    button.textContent = "Add to basket →";
+      false;
+
+    button.textContent =
+
+      "Add to basket →";
 
   }
 
@@ -1626,7 +1768,11 @@ function updateBasket() {
 
   document
 
-    .getElementById("basketCount")
+    .getElementById(
+
+      "basketCount"
+
+    )
 
     .textContent =
 
@@ -1640,7 +1786,11 @@ function updateBasket() {
 
     );
 
-  if (basket.length === 0) {
+  if (
+
+    basket.length === 0
+
+  ) {
 
     container.innerHTML =
 
@@ -1678,21 +1828,37 @@ function updateBasket() {
 
                 '<strong class="basket-filename">' +
 
-                  escapeHtml(item.filename) +
+                  escapeHtml(
+
+                    item.filename
+
+                  ) +
 
                 '</strong>' +
 
                 '<div class="basket-details">' +
 
-                  escapeHtml(item.material) +
+                  escapeHtml(
+
+                    item.material
+
+                  ) +
 
                   ' · ' +
 
-                  escapeHtml(item.colour) +
+                  escapeHtml(
+
+                    item.colour
+
+                  ) +
 
                   ' · ' +
 
-                  escapeHtml(item.quality) +
+                  escapeHtml(
+
+                    item.quality
+
+                  ) +
 
                   ' · Qty ' +
 
@@ -1706,7 +1872,11 @@ function updateBasket() {
 
                 '<strong>£' +
 
-                  item.price.toFixed(2) +
+                  Number(
+
+                    item.price
+
+                  ).toFixed(2) +
 
                 '</strong>' +
 
@@ -1746,7 +1916,17 @@ function updateBasket() {
 
       function(sum, item) {
 
-        return sum + item.price;
+        return (
+
+          sum +
+
+          Number(
+
+            item.price
+
+          )
+
+        );
 
       },
 
@@ -1764,7 +1944,9 @@ function updateBasket() {
 
     .textContent =
 
-    "£" + total.toFixed(2);
+    "£" +
+
+    total.toFixed(2);
 
 }
 
@@ -1783,6 +1965,8 @@ function removeBasketItem(index) {
     1
 
   );
+
+  saveBasket();
 
   updateBasket();
 
@@ -1830,7 +2014,11 @@ function closeBasket() {
 
 document
 
-  .getElementById("basketPanel")
+  .getElementById(
+
+    "basketPanel"
+
+  )
 
   .addEventListener(
 
@@ -1884,7 +2072,9 @@ async function basketCheckout() {
 
     );
 
-  checkoutButton.disabled = true;
+  checkoutButton.disabled =
+
+    true;
 
   checkoutButton.textContent =
 
@@ -1910,11 +2100,13 @@ async function basketCheckout() {
 
           },
 
-          body: JSON.stringify({
+          body:
 
-            basket: basket
+            JSON.stringify({
 
-          })
+              basket: basket
+
+            })
 
         }
 
@@ -1964,13 +2156,119 @@ async function basketCheckout() {
 
     );
 
-    checkoutButton.disabled = false;
+    checkoutButton.disabled =
+
+      false;
 
     checkoutButton.textContent =
 
       "Checkout securely →";
 
   }
+
+}
+
+/* ----------------------------------------
+
+   PAYMENT RETURN
+
+---------------------------------------- */
+
+function handlePaymentReturn() {
+
+  const params =
+
+    new URLSearchParams(
+
+      window.location.search
+
+    );
+
+  const payment =
+
+    params.get("payment");
+
+  if (!payment) {
+
+    return;
+
+  }
+
+  const box =
+
+    document.getElementById(
+
+      "paymentMessage"
+
+    );
+
+  if (
+
+    payment === "success"
+
+  ) {
+
+    box.style.display =
+
+      "block";
+
+    box.innerHTML =
+
+      '<div class="payment-message-box payment-success">' +
+
+        '<h2>Payment successful</h2>' +
+
+        '<p>Thank you. Stripe has returned you to Layer3DPost after checkout.</p>' +
+
+      '</div>';
+
+    basket = [];
+
+    saveBasket();
+
+    updateBasket();
+
+  }
+
+  if (
+
+    payment === "cancelled"
+
+  ) {
+
+    box.style.display =
+
+      "block";
+
+    box.innerHTML =
+
+      '<div class="payment-message-box payment-cancelled">' +
+
+        '<h2>Checkout cancelled</h2>' +
+
+        '<p>No payment was completed. Your basket is still available.</p>' +
+
+      '</div>';
+
+  }
+
+  window.history.replaceState(
+
+    {},
+
+    document.title,
+
+    window.location.pathname
+
+  );
+
+  window.scrollTo({
+
+    top: 0,
+
+    behavior: "smooth"
+
+  });
 
 }
 
@@ -2026,9 +2324,17 @@ function escapeHtml(value) {
 
 }
 
+/* ----------------------------------------
+
+   START PAGE
+
+---------------------------------------- */
+
 updatePrice();
 
 updateBasket();
+
+handlePaymentReturn();
 
 </script>
 
