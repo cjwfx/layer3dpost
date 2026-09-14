@@ -352,24 +352,46 @@ document.getElementById("quality").addEventListener("change",updatePrice);
 
 document.getElementById("quantity").addEventListener("input",updatePrice);
 
-function checkout(){
+async function checkout() {
+  const fileInput = document.getElementById("file");
+  const file = fileInput.files[0];
 
-const file=document.getElementById("file").files[0];
+  if (!file) {
+    alert("Please upload your STL or 3MF file first.");
+    return;
+  }
 
-if(!file){
+  const filename = file.name.toLowerCase();
 
-alert("Please upload your STL or 3MF file first.");
+  if (!filename.endsWith(".stl") && !filename.endsWith(".3mf")) {
+    alert("Only STL and 3MF files are accepted.");
+    fileInput.value = "";
+    return;
+  }
 
-return;
+  const formData = new FormData();
+  formData.append("model", file);
 
+  try {
+    const response = await fetch("/api/upload", {
+      method: "POST",
+      body: formData
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      alert(result.error || "Upload failed.");
+      return;
+    }
+
+    alert(
+      "Model uploaded successfully: " +
+      result.filename +
+      "\n\nStripe checkout will be connected next."
+    );
+
+  } catch (error) {
+    alert("Something went wrong while uploading your model.");
+  }
 }
-
-alert("Great — your model has been selected. Secure ordering and Stripe checkout will be connected next.");
-
-}
-
-</script>
-
-</body>
-
-</html>
