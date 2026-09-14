@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Layer3DPost | UK 3D Printing Service</title>
+
+<style>
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{font-family:Arial,sans-serif;background:#0b0e0d;color:#f5f5f5;line-height:1.5}
+
+header{display:flex;justify-content:space-between;align-items:center;padding:20px 6%;border-bottom:1px solid #252b28}
+
+.logo{font-size:23px;font-weight:800}
+
+.logo span{color:#65e68b}
+
+nav a{color:#ddd;text-decoration:none;margin-left:22px;font-size:14px}
+
+.hero{padding:85px 6% 65px;max-width:1100px;margin:auto;text-align:center}
+
+.badge{display:inline-block;color:#72eb94;background:#14241a;border:1px solid #285c36;padding:7px 14px;border-radius:30px;font-size:13px;margin-bottom:22px}
+
+h1{font-size:clamp(42px,8vw,78px);line-height:1.02;letter-spacing:-3px}
+
+h1 span{color:#68e98e}
+
+.hero p{color:#aeb7b1;font-size:18px;max-width:650px;margin:25px auto}
+
+.button{display:inline-block;background:#67e88d;color:#07110a;padding:15px 24px;border-radius:9px;font-weight:800;text-decoration:none;border:0;cursor:pointer}
+
+.secondary{background:#181d1a;color:#fff;border:1px solid #343c37;margin-left:8px}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);max-width:850px;margin:50px auto 0;border:1px solid #252c28;border-radius:12px;overflow:hidden}
+
+.stat{padding:20px;border-right:1px solid #252c28}
+
+.stat:last-child{border:0}
+
+.stat strong{display:block;font-size:20px}
+
+.stat small{color:#89928c}
+
+section{padding:70px 6%;max-width:1100px;margin:auto}
+
+.section-title{text-align:center;margin-bottom:35px}
+
+.section-title h2{font-size:34px;margin-bottom:8px}
+
+.section-title p{color:#929c96}
+
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+
+.card{background:#121614;border:1px solid #282f2b;padding:25px;border-radius:13px}
+
+.card h3{margin:12px 0 7px}
+
+.card p{color:#929b95;font-size:14px}
+
+.icon{font-size:27px}
+
+.quote{background:#111513;border:1px solid #29312c;border-radius:16px;padding:30px;max-width:780px;margin:auto}
+
+.upload{border:2px dashed #3a4c40;border-radius:12px;padding:40px 20px;text-align:center;margin-bottom:25px}
+
+.upload input{margin-top:15px;max-width:100%}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+
+label{font-size:13px;color:#a8b0ab}
+
+select,input[type=number]{width:100%;background:#0c100e;border:1px solid #323a35;color:white;padding:13px;border-radius:8px;margin-top:7px}
+
+.price{display:flex;justify-content:space-between;align-items:center;margin-top:25px;padding-top:20px;border-top:1px solid #29302c}
+
+.price strong{font-size:29px;color:#6ce990}
+
+.note{color:#78817c;font-size:12px;margin-top:12px}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+
+.step{padding:25px;border-left:2px solid #61df87;background:#101411}
+
+.step b{color:#65e88b}
+
+footer{border-top:1px solid #252b28;padding:35px 6%;color:#858e88;font-size:13px;text-align:center}
+
+@media(max-width:700px){
+
+nav{display:none}
+
+.cards,.steps{grid-template-columns:1fr 1fr}
+
+.grid{grid-template-columns:1fr}
+
+.stats{grid-template-columns:1fr}
+
+.stat{border-right:0;border-bottom:1px solid #252c28}
+
+h1{letter-spacing:-2px}
+
+}
+
+@media(max-width:450px){.cards,.steps{grid-template-columns:1fr}}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">Layer<span>3D</span>Post</div>
+
+<nav>
+
+<a href="#materials">Materials</a>
+
+<a href="#how">How it works</a>
+
+<a href="#quote">Get a quote</a>
+
+</nav>
+
+</header>
+
+<main>
+
+<div class="hero">
+
+<div class="badge">UK 3D PRINTING SERVICE</div>
+
+<h1>Your design.<br><span>Printed & delivered.</span></h1>
+
+<p>Upload your 3D model, choose your material and get your part professionally printed and delivered anywhere in the UK.</p>
+
+<a class="button" href="#quote">Upload your model</a>
+
+<a class="button secondary" href="#how">How it works</a>
+
+<div class="stats">
+
+<div class="stat"><strong>256 × 256 × 256</strong><small>Maximum print size (mm)</small></div>
+
+<div class="stat"><strong>4 materials</strong><small>PLA · PETG · TPU · PLA-CF</small></div>
+
+<div class="stat"><strong>UK delivery</strong><small>Tracked shipping available</small></div>
+
+</div>
+
+</div>
+
+<section id="materials">
+
+<div class="section-title">
+
+<h2>Choose your material</h2>
+
+<p>From prototypes to tougher functional parts.</p>
+
+</div>
+
+<div class="cards">
+
+<div class="card"><div class="icon">⬡</div><h3>PLA</h3><p>Excellent for prototypes, models and everyday parts.</p></div>
+
+<div class="card"><div class="icon">◆</div><h3>PETG</h3><p>Durable with improved heat and moisture resistance.</p></div>
+
+<div class="card"><div class="icon">〰</div><h3>TPU</h3><p>Flexible material for grips, covers and compliant parts.</p></div>
+
+<div class="card"><div class="icon">◈</div><h3>PLA-CF</h3><p>Carbon-fibre reinforced PLA with a premium technical finish.</p></div>
+
+</div>
+
+</section>
+
+<section id="quote">
+
+<div class="section-title">
+
+<h2>Get an instant estimate</h2>
+
+<p>Upload your model and configure your print.</p>
+
+</div>
+
+<div class="quote">
+
+<div class="upload">
+
+<h3>Upload your 3D model</h3>
+
+<p style="color:#89928c;margin-top:7px">STL or 3MF · Maximum size 256 × 256 × 256 mm</p>
+
+<input type="file" id="file" accept=".stl,.3mf">
+
+</div>
+
+<div class="grid">
+
+<div>
+
+<label>Material
+
+<select id="material">
+
+<option value="1">PLA</option>
+
+<option value="1.25">PETG</option>
+
+<option value="1.45">TPU</option>
+
+<option value="1.6">PLA-CF</option>
+
+</select>
+
+</label>
+
+</div>
+
+<div>
+
+<label>Colour
+
+<select>
+
+<option>Black</option>
+
+<option>White</option>
+
+<option>Other colour — subject to availability</option>
+
+</select>
+
+</label>
+
+</div>
+
+<div>
+
+<label>Quality
+
+<select id="quality">
+
+<option value="1">Standard</option>
+
+<option value="1.25">Fine</option>
+
+<option value="1.5">High detail</option>
+
+</select>
+
+</label>
+
+</div>
+
+<div>
+
+<label>Quantity
+
+<input id="quantity" type="number" value="1" min="1" max="100">
+
+</label>
+
+</div>
+
+</div>
+
+<div class="price">
+
+<div>
+
+<small style="color:#89928c">ESTIMATED FROM</small>
+
+<div><strong id="price">£9.95</strong></div>
+
+</div>
+
+<button class="button" onclick="checkout()">Continue →</button>
+
+</div>
+
+<p class="note">Estimate only. Final pricing will depend on model geometry, material usage and print time.</p>
+
+</div>
+
+</section>
+
+<section id="how">
+
+<div class="section-title">
+
+<h2>From file to front door</h2>
+
+<p>A straightforward UK 3D printing service.</p>
+
+</div>
+
+<div class="steps">
+
+<div class="step"><b>01</b><h3>Upload</h3><p>Send us your STL or 3MF model.</p></div>
+
+<div class="step"><b>02</b><h3>We print</h3><p>Your order is prepared and professionally 3D printed.</p></div>
+
+<div class="step"><b>03</b><h3>We deliver</h3><p>Your finished parts are packed and dispatched within the UK.</p></div>
+
+</div>
+
+</section>
+
+</main>
+
+<footer>
+
+<strong style="color:white">Layer3DPost</strong><br><br>
+
+Layer3DPost is a trading name of CJ FX Limited · Company No. 09621949<br>
+
+Layer3dpost@outlook.com<br><br>
+
+© 2026 CJ FX Limited. All rights reserved.
+
+</footer>
+
+<script>
+
+function updatePrice(){
+
+const material=Number(document.getElementById("material").value);
+
+const quality=Number(document.getElementById("quality").value);
+
+const quantity=Math.max(1,Number(document.getElementById("quantity").value)||1);
+
+const price=(9.95*material*quality*quantity).toFixed(2);
+
+document.getElementById("price").textContent="£"+price;
+
+}
+
+document.getElementById("material").addEventListener("change",updatePrice);
+
+document.getElementById("quality").addEventListener("change",updatePrice);
+
+document.getElementById("quantity").addEventListener("input",updatePrice);
+
+function checkout(){
+
+const file=document.getElementById("file").files[0];
+
+if(!file){
+
+alert("Please upload your STL or 3MF file first.");
+
+return;
+
+}
+
+alert("Great — your model has been selected. Secure ordering and Stripe checkout will be connected next.");
+
+}
+
+</script>
+
+</body>
+
+</html>
