@@ -10,8 +10,6 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
@@ -72,15 +70,21 @@ app.post("/api/upload", upload.single("model"), (req, res) => {
 
 });
 
-/* -------------------------------
-
-   STRIPE CHECKOUT
-
--------------------------------- */
-
 app.post("/api/create-checkout-session", async (req, res) => {
 
   try {
+
+    if (!process.env.STRIPE_SECRET_KEY) {
+
+      return res.status(500).json({
+
+        error: "Stripe has not been configured yet."
+
+      });
+
+    }
+
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
     const { basket } = req.body;
 
@@ -94,23 +98,13 @@ app.post("/api/create-checkout-session", async (req, res) => {
 
     }
 
-    /*
-
-      IMPORTANT:
-
-      We calculate prices again on the server.
-
-      We do NOT trust prices sent by the browser.
-
-    */
-
     const materialMultipliers = {
 
-      "PLA": 1,
+      PLA: 1,
 
-      "PETG": 1.25,
+      PETG: 1.25,
 
-      "TPU": 1.45,
+      TPU: 1.45,
 
       "PLA-CF": 1.6
 
@@ -118,9 +112,9 @@ app.post("/api/create-checkout-session", async (req, res) => {
 
     const qualityMultipliers = {
 
-      "Standard": 1,
+      Standard: 1,
 
-      "Fine": 1.25,
+      Fine: 1.25,
 
       "High detail": 1.5
 
@@ -128,7 +122,7 @@ app.post("/api/create-checkout-session", async (req, res) => {
 
     const basePrice = 9.95;
 
-    const lineItems = basket.map(item => {
+    const lineItems = basket.map((item) => {
 
       const materialMultiplier =
 
@@ -138,21 +132,19 @@ app.post("/api/create-checkout-session", async (req, res) => {
 
         qualityMultipliers[item.quality];
 
-      const quantity =
-
-        Math.max(
-
-          1,
-
-          Math.min(100, Number(item.quantity) || 1)
-
-        );
-
       if (!materialMultiplier || !qualityMultiplier) {
 
         throw new Error("Invalid print configuration.");
 
       }
+
+      const quantity = Math.max(
+
+        1,
+
+        Math.min(100, Number(item.quantity) || 1)
+
+      );
 
       const unitPrice =
 
@@ -161,10 +153,6 @@ app.post("/api/create-checkout-session", async (req, res) => {
         materialMultiplier *
 
         qualityMultiplier;
-
-      const unitAmount =
-
-        Math.round(unitPrice * 100);
 
       return {
 
@@ -182,21 +170,15 @@ app.post("/api/create-checkout-session", async (req, res) => {
 
           },
 
-          unit_amount: unitAmount
+          unit_amount: Math.round(unitPrice * 100)
 
         },
 
-        quantity: quantity
+        quantity
 
       };
 
     });
-
-    /*
-
-      UK tracked delivery
-
-    */
 
     lineItems.push({
 
@@ -218,31 +200,33 @@ app.post("/api/create-checkout-session", async (req, res) => {
 
     });
 
-    const session = await stripe.checkout.sessions.create({
+    const session =
 
-      mode: "payment",
+      await stripe.checkout.sessions.create({
 
-      line_items: lineItems,
+        mode: "payment",
 
-      success_url:
+        line_items: lineItems,
 
-        ${req.protocol}://${req.get("host")}/?payment=success,
+        success_url:
 
-      cancel_url:
+          ${req.protocol}://${req.get("host")}/?payment=success,
 
-        ${req.protocol}://${req.get("host")}/?payment=cancelled,
+        cancel_url:
 
-      billing_address_collection: "required",
+          ${req.protocol}://${req.get("host")}/?payment=cancelled,
 
-      shipping_address_collection: {
+        billing_address_collection: "required",
 
-        allowed_countries: ["GB"]
+        shipping_address_collection: {
 
-      },
+          allowed_countries: ["GB"]
 
-      customer_creation: "always"
+        },
 
-    });
+        customer_creation: "always"
+
+      });
 
     res.json({
 
@@ -252,7 +236,7 @@ app.post("/api/create-checkout-session", async (req, res) => {
 
   } catch (error) {
 
-    console.error(error);
+    console.error("Stripe checkout error:", error);
 
     res.status(500).json({
 
@@ -282,6 +266,8 @@ app.get("/health", (req, res) => {
 
 app.use((err, req, res, next) => {
 
+  console.error(err);
+
   res.status(400).json({
 
     success: false,
@@ -294,10 +280,6 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, "0.0.0.0", () => {
 
-  console.log(
-
-    Layer3DPost running on port ${PORT}
-
-  );
+  console.log(Layer3DPost running on port ${PORT});
 
 });
