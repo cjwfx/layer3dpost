@@ -319,6 +319,25 @@ footer {
   text-align: center;
 }
 
+.footer-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin: 16px 0;
+}
+
+.footer-links a,
+.footer-email {
+  color: #aeb7b1;
+  text-decoration: none;
+}
+
+.footer-links a:hover,
+.footer-email:hover {
+  color: #65e68b;
+}
+
 /* PAYMENT RETURN MESSAGE */
 
 #paymentMessage {
@@ -789,14 +808,24 @@ footer {
     Layer3DPost
   </strong>
 
-  <br><br>
+  <div class="footer-links">
+    <a href="/terms.html">Terms &amp; Conditions</a>
+    <a href="/privacy.html">Privacy Policy</a>
+    <a href="/delivery-returns.html">Delivery &amp; Returns</a>
+    <a href="mailto:Layer3dpost@outlook.com">Contact</a>
+  </div>
 
   Layer3DPost is a trading name of CJ FX Limited
   · Company No. 09621949
 
   <br>
 
-  Layer3dpost@outlook.com
+  <a
+    class="footer-email"
+    href="mailto:Layer3dpost@outlook.com"
+  >
+    Layer3dpost@outlook.com
+  </a>
 
   <br><br>
 
@@ -891,6 +920,7 @@ function saveBasket() {
 
 }
 
+
 /* ----------------------------------------
    PRICE CALCULATOR
 ---------------------------------------- */
@@ -917,6 +947,7 @@ function calculateCurrentPrice() {
 
 }
 
+
 function updatePrice() {
 
   const price =
@@ -928,6 +959,7 @@ function updatePrice() {
     "£" + price.toFixed(2);
 
 }
+
 
 document
   .getElementById("material")
@@ -949,6 +981,7 @@ document
     "input",
     updatePrice
   );
+
 
 /* ----------------------------------------
    ADD PART TO BASKET
@@ -1156,6 +1189,7 @@ async function addToBasket() {
 
 }
 
+
 /* ----------------------------------------
    DRAW BASKET
 ---------------------------------------- */
@@ -1300,6 +1334,7 @@ function updateBasket() {
 
 }
 
+
 /* ----------------------------------------
    REMOVE ITEM
 ---------------------------------------- */
@@ -1316,6 +1351,7 @@ function removeBasketItem(index) {
   updateBasket();
 
 }
+
 
 /* ----------------------------------------
    OPEN / CLOSE BASKET
@@ -1334,6 +1370,7 @@ function openBasket() {
 
 }
 
+
 function closeBasket() {
 
   document
@@ -1344,6 +1381,7 @@ function closeBasket() {
     "none";
 
 }
+
 
 document
   .getElementById(
@@ -1361,6 +1399,7 @@ document
 
     }
   );
+
 
 /* ----------------------------------------
    STRIPE CHECKOUT
@@ -1455,6 +1494,7 @@ async function basketCheckout() {
 
 }
 
+
 /* ----------------------------------------
    PAYMENT RETURN
 ---------------------------------------- */
@@ -1527,6 +1567,7 @@ function handlePaymentReturn() {
 
 }
 
+
 /* ----------------------------------------
    SAFE TEXT OUTPUT
 ---------------------------------------- */
@@ -1561,6 +1602,7 @@ function escapeHtml(value) {
     );
 
 }
+
 
 /* ----------------------------------------
    START PAGE
