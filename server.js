@@ -4,6 +4,7 @@ const fs = require("fs");
 const crypto = require("crypto");
 const multer = require("multer");
 const Stripe = require("stripe");
+const AdmZip = require("adm-zip");
 
 const {
   S3Client,
@@ -84,7 +85,7 @@ function getR2() {
 }
 
 
-async function uploadFileToR2(file) {
+async function uploadFileToR2(file, analysis) {
 
   const r2 =
     getR2();
@@ -136,7 +137,22 @@ async function uploadFileToR2(file) {
           originalname:
             encodeURIComponent(
               originalName
-            )
+            ),
+
+          modelxmm:
+            String(analysis.xMm),
+
+          modelymm:
+            String(analysis.yMm),
+
+          modelzmm:
+            String(analysis.zMm),
+
+          modelvolumecm3:
+            String(analysis.volumeCm3),
+
+          modeltriangles:
+            String(analysis.triangleCount)
         }
       })
     );
@@ -328,6 +344,857 @@ function formatAddress(address) {
 
 
 /* =========================================================
+   MODEL ANALYSIS
+
+   Stage 1 only:
+   - measures uploaded STL / 3MF files
+   - rejects models larger than 256 mm on any axis
+   - does NOT change checkout pricing yet
+========================================================= */
+
+const MAX_MODEL_DIMENSION_MM = 256;
+
+
+function finishModelAnalysis(
+  min,
+  max,
+  signedVolumeMm3,
+  triangleCount
+) {
+
+  if (
+    !Number.isFinite(min.x) ||
+    !Number.isFinite(min.y) ||
+    !Number.isFinite(min.z) ||
+    !Number.isFinite(max.x) ||
+    !Number.isFinite(max.y) ||
+    !Number.isFinite(max.z) ||
+    triangleCount < 1
+  ) {
+
+    throw new Error(
+      "The model does not contain readable mesh geometry."
+    );
+  }
+
+
+  const xMm =
+    max.x - min.x;
+
+  const yMm =
+    max.y - min.y;
+
+  const zMm =
+    max.z - min.z;
+
+
+  if (
+    xMm <= 0 ||
+    yMm <= 0 ||
+    zMm <= 0
+  ) {
+
+    throw new Error(
+      "The model has invalid or zero-size dimensions."
+    );
+  }
+
+
+  if (
+    xMm > MAX_MODEL_DIMENSION_MM ||
+    yMm > MAX_MODEL_DIMENSION_MM ||
+    zMm > MAX_MODEL_DIMENSION_MM
+  ) {
+
+    throw new Error(
+      "This model is too large. Maximum supported size is 256 × 256 × 256 mm. " +
+      "Detected size: " +
+      xMm.toFixed(1) +
+      " × " +
+      yMm.toFixed(1) +
+      " × " +
+      zMm.toFixed(1) +
+      " mm."
+    );
+  }
+
+
+  return {
+
+    xMm:
+      Number(
+        xMm.toFixed(3)
+      ),
+
+    yMm:
+      Number(
+        yMm.toFixed(3)
+      ),
+
+    zMm:
+      Number(
+        zMm.toFixed(3)
+      ),
+
+    volumeCm3:
+      Number(
+        (
+          Math.abs(
+            signedVolumeMm3
+          ) / 1000
+        ).toFixed(3)
+      ),
+
+    triangleCount:
+      triangleCount
+  };
+}
+
+
+function addTriangleToAnalysis(
+  state,
+  a,
+  b,
+  c
+) {
+
+  for (
+    const point of [
+      a,
+      b,
+      c
+    ]
+  ) {
+
+    state.min.x =
+      Math.min(
+        state.min.x,
+        point.x
+      );
+
+    state.min.y =
+      Math.min(
+        state.min.y,
+        point.y
+      );
+
+    state.min.z =
+      Math.min(
+        state.min.z,
+        point.z
+      );
+
+    state.max.x =
+      Math.max(
+        state.max.x,
+        point.x
+      );
+
+    state.max.y =
+      Math.max(
+        state.max.y,
+        point.y
+      );
+
+    state.max.z =
+      Math.max(
+        state.max.z,
+        point.z
+      );
+  }
+
+
+  state.signedVolumeMm3 +=
+    (
+      a.x *
+      (
+        b.y * c.z -
+        b.z * c.y
+      )
+
+      -
+
+      a.y *
+      (
+        b.x * c.z -
+        b.z * c.x
+      )
+
+      +
+
+      a.z *
+      (
+        b.x * c.y -
+        b.y * c.x
+      )
+
+    ) / 6;
+
+
+  state.triangleCount++;
+}
+
+
+function newAnalysisState() {
+
+  return {
+
+    min: {
+      x: Infinity,
+      y: Infinity,
+      z: Infinity
+    },
+
+    max: {
+      x: -Infinity,
+      y: -Infinity,
+      z: -Infinity
+    },
+
+    signedVolumeMm3:
+      0,
+
+    triangleCount:
+      0
+  };
+}
+
+
+function analyseBinaryStl(buffer) {
+
+  if (
+    buffer.length < 84
+  ) {
+
+    throw new Error(
+      "The STL file is incomplete or invalid."
+    );
+  }
+
+
+  const triangleCount =
+    buffer.readUInt32LE(80);
+
+  const expectedLength =
+    84 +
+    triangleCount * 50;
+
+
+  if (
+    triangleCount < 1 ||
+    expectedLength >
+      buffer.length
+  ) {
+
+    throw new Error(
+      "The STL file is incomplete or invalid."
+    );
+  }
+
+
+  const state =
+    newAnalysisState();
+
+
+  for (
+    let i = 0;
+    i < triangleCount;
+    i++
+  ) {
+
+    const offset =
+      84 +
+      i * 50 +
+      12;
+
+
+    const a = {
+
+      x:
+        buffer.readFloatLE(
+          offset
+        ),
+
+      y:
+        buffer.readFloatLE(
+          offset + 4
+        ),
+
+      z:
+        buffer.readFloatLE(
+          offset + 8
+        )
+    };
+
+
+    const b = {
+
+      x:
+        buffer.readFloatLE(
+          offset + 12
+        ),
+
+      y:
+        buffer.readFloatLE(
+          offset + 16
+        ),
+
+      z:
+        buffer.readFloatLE(
+          offset + 20
+        )
+    };
+
+
+    const c = {
+
+      x:
+        buffer.readFloatLE(
+          offset + 24
+        ),
+
+      y:
+        buffer.readFloatLE(
+          offset + 28
+        ),
+
+      z:
+        buffer.readFloatLE(
+          offset + 32
+        )
+    };
+
+
+    addTriangleToAnalysis(
+      state,
+      a,
+      b,
+      c
+    );
+  }
+
+
+  return finishModelAnalysis(
+    state.min,
+    state.max,
+    state.signedVolumeMm3,
+    state.triangleCount
+  );
+}
+
+
+function analyseAsciiStl(buffer) {
+
+  const text =
+    buffer.toString(
+      "utf8"
+    );
+
+
+  const vertexRegex =
+    /vertex\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)/gi;
+
+
+  const vertices = [];
+
+  let match;
+
+
+  while (
+    (
+      match =
+        vertexRegex.exec(
+          text
+        )
+    ) !== null
+  ) {
+
+    vertices.push({
+
+      x:
+        Number(
+          match[1]
+        ),
+
+      y:
+        Number(
+          match[2]
+        ),
+
+      z:
+        Number(
+          match[3]
+        )
+    });
+  }
+
+
+  if (
+    vertices.length < 3 ||
+    vertices.length % 3 !== 0
+  ) {
+
+    throw new Error(
+      "The ASCII STL file does not contain valid triangles."
+    );
+  }
+
+
+  const state =
+    newAnalysisState();
+
+
+  for (
+    let i = 0;
+    i < vertices.length;
+    i += 3
+  ) {
+
+    addTriangleToAnalysis(
+
+      state,
+
+      vertices[i],
+
+      vertices[
+        i + 1
+      ],
+
+      vertices[
+        i + 2
+      ]
+    );
+  }
+
+
+  return finishModelAnalysis(
+    state.min,
+    state.max,
+    state.signedVolumeMm3,
+    state.triangleCount
+  );
+}
+
+
+function analyseStl(filePath) {
+
+  const buffer =
+    fs.readFileSync(
+      filePath
+    );
+
+
+  if (
+    buffer.length >= 84
+  ) {
+
+    const triangleCount =
+      buffer.readUInt32LE(
+        80
+      );
+
+    const expectedLength =
+      84 +
+      triangleCount * 50;
+
+
+    if (
+      triangleCount > 0 &&
+      expectedLength ===
+        buffer.length
+    ) {
+
+      return analyseBinaryStl(
+        buffer
+      );
+    }
+  }
+
+
+  return analyseAsciiStl(
+    buffer
+  );
+}
+
+
+function getXmlAttribute(
+  tag,
+  name
+) {
+
+  const regex =
+    new RegExp(
+      `${name}\\s*=\\s*["\']([^"\']+)["\']`,
+      "i"
+    );
+
+
+  const match =
+    regex.exec(
+      tag
+    );
+
+
+  return match
+    ? match[1]
+    : null;
+}
+
+
+function analyse3mf(filePath) {
+
+  const zip =
+    new AdmZip(
+      filePath
+    );
+
+
+  const entries =
+    zip.getEntries();
+
+
+  const modelEntries =
+    entries.filter(
+      function (entry) {
+
+        return (
+          !entry.isDirectory &&
+          /(^|\/)3d\/.*\.model$/i
+            .test(
+              entry.entryName
+            )
+        );
+      }
+    );
+
+
+  if (
+    modelEntries.length === 0
+  ) {
+
+    throw new Error(
+      "The 3MF file does not contain a readable 3D model."
+    );
+  }
+
+
+  const state =
+    newAnalysisState();
+
+
+  for (
+    const entry of
+      modelEntries
+  ) {
+
+    const xml =
+      entry
+        .getData()
+        .toString(
+          "utf8"
+        );
+
+
+    const modelTagMatch =
+      xml.match(
+        /<model\b[^>]*>/i
+      );
+
+
+    const unit =
+      modelTagMatch
+
+        ?
+
+        (
+          getXmlAttribute(
+            modelTagMatch[0],
+            "unit"
+          ) ||
+          "millimeter"
+        ).toLowerCase()
+
+        :
+
+        "millimeter";
+
+
+    const unitToMm = {
+
+      micron:
+        0.001,
+
+      millimeter:
+        1,
+
+      centimeter:
+        10,
+
+      inch:
+        25.4,
+
+      foot:
+        304.8,
+
+      meter:
+        1000
+
+    }[unit];
+
+
+    if (!unitToMm) {
+
+      throw new Error(
+        "This 3MF file uses an unsupported measurement unit."
+      );
+    }
+
+
+    const objectRegex =
+      /<object\b[^>]*>[\s\S]*?<\/object>/gi;
+
+
+    let objectMatch;
+
+
+    while (
+      (
+        objectMatch =
+          objectRegex.exec(
+            xml
+          )
+      ) !== null
+    ) {
+
+      const objectXml =
+        objectMatch[0];
+
+
+      if (
+        !/<mesh\b/i.test(
+          objectXml
+        )
+      ) {
+
+        continue;
+      }
+
+
+      const vertices = [];
+
+
+      const vertexRegex =
+        /<vertex\b[^>]*\/?\s*>/gi;
+
+
+      let vertexMatch;
+
+
+      while (
+        (
+          vertexMatch =
+            vertexRegex.exec(
+              objectXml
+            )
+        ) !== null
+      ) {
+
+        const tag =
+          vertexMatch[0];
+
+
+        const x =
+          Number(
+            getXmlAttribute(
+              tag,
+              "x"
+            )
+          );
+
+
+        const y =
+          Number(
+            getXmlAttribute(
+              tag,
+              "y"
+            )
+          );
+
+
+        const z =
+          Number(
+            getXmlAttribute(
+              tag,
+              "z"
+            )
+          );
+
+
+        if (
+          ![
+            x,
+            y,
+            z
+          ].every(
+            Number.isFinite
+          )
+        ) {
+
+          throw new Error(
+            "The 3MF file contains an invalid vertex."
+          );
+        }
+
+
+        vertices.push({
+
+          x:
+            x *
+            unitToMm,
+
+          y:
+            y *
+            unitToMm,
+
+          z:
+            z *
+            unitToMm
+        });
+      }
+
+
+      const triangleRegex =
+        /<triangle\b[^>]*\/?\s*>/gi;
+
+
+      let triangleMatch;
+
+
+      while (
+        (
+          triangleMatch =
+            triangleRegex.exec(
+              objectXml
+            )
+        ) !== null
+      ) {
+
+        const tag =
+          triangleMatch[0];
+
+
+        const v1 =
+          Number(
+            getXmlAttribute(
+              tag,
+              "v1"
+            )
+          );
+
+
+        const v2 =
+          Number(
+            getXmlAttribute(
+              tag,
+              "v2"
+            )
+          );
+
+
+        const v3 =
+          Number(
+            getXmlAttribute(
+              tag,
+              "v3"
+            )
+          );
+
+
+        if (
+          !Number.isInteger(
+            v1
+          ) ||
+          !Number.isInteger(
+            v2
+          ) ||
+          !Number.isInteger(
+            v3
+          ) ||
+          !vertices[v1] ||
+          !vertices[v2] ||
+          !vertices[v3]
+        ) {
+
+          throw new Error(
+            "The 3MF file contains an invalid triangle."
+          );
+        }
+
+
+        addTriangleToAnalysis(
+
+          state,
+
+          vertices[v1],
+
+          vertices[v2],
+
+          vertices[v3]
+        );
+      }
+    }
+  }
+
+
+  return finishModelAnalysis(
+    state.min,
+    state.max,
+    state.signedVolumeMm3,
+    state.triangleCount
+  );
+}
+
+
+function analyseModelFile(
+  file
+) {
+
+  const extension =
+    path
+      .extname(
+        file.originalname ||
+        ""
+      )
+      .toLowerCase();
+
+
+  if (
+    extension === ".stl"
+  ) {
+
+    return analyseStl(
+      file.path
+    );
+  }
+
+
+  if (
+    extension === ".3mf"
+  ) {
+
+    return analyse3mf(
+      file.path
+    );
+  }
+
+
+  throw new Error(
+    "Only STL and 3MF files are accepted."
+  );
+}
+
+
+/* =========================================================
    RESEND
 ========================================================= */
 
@@ -396,6 +1263,7 @@ async function sendResendEmail(options) {
       data
     );
 
+
     throw new Error(
       data.message ||
       "Unable to send email."
@@ -446,10 +1314,7 @@ app.post(
       const signature =
         req.headers[
           "stripe-signature"
-        ];
-
-
-      event =
+        ];      event =
         stripe.webhooks
           .constructEvent(
 
@@ -1286,9 +2151,15 @@ app.use(
 /* =========================================================
    MODEL UPLOAD
 
-   Files are temporarily received by Render,
-   uploaded to private Cloudflare R2,
-   then immediately deleted from Render.
+   Files are temporarily received by Render.
+
+   Before the file is copied to R2:
+   1. STL / 3MF geometry is analysed.
+   2. Dimensions and mesh volume are calculated.
+   3. Oversize models are rejected.
+   4. Verified measurements are stored in R2 metadata.
+
+   The temporary Render file is then deleted.
 ========================================================= */
 
 const upload =
@@ -1369,9 +2240,28 @@ app.post(
 
     try {
 
+      /*
+        Analyse the temporary file BEFORE
+        uploadFileToR2 deletes that copy.
+      */
+
+      const analysis =
+        analyseModelFile(
+          req.file
+        );
+
+
+      console.log(
+        "Model analysis:",
+        req.file.originalname,
+        analysis
+      );
+
+
       const objectKey =
         await uploadFileToR2(
-          req.file
+          req.file,
+          analysis
         );
 
 
@@ -1389,7 +2279,28 @@ app.post(
           req.file.originalname,
 
         uploadId:
-          objectKey
+          objectKey,
+
+        analysis: {
+
+          dimensions: {
+
+            x:
+              analysis.xMm,
+
+            y:
+              analysis.yMm,
+
+            z:
+              analysis.zMm
+          },
+
+          volumeCm3:
+            analysis.volumeCm3,
+
+          triangleCount:
+            analysis.triangleCount
+        }
       });
 
     }
@@ -1397,9 +2308,13 @@ app.post(
     catch (error) {
 
       /*
-        Make sure a failed R2 upload
-        does not leave a temporary
-        file behind on Render.
+        If analysis fails before the R2
+        upload begins, the temporary file
+        still needs to be deleted.
+
+        If R2 upload fails,
+        uploadFileToR2 also attempts
+        cleanup in its finally block.
       */
 
       try {
@@ -1429,14 +2344,15 @@ app.post(
 
 
       console.error(
-        "R2 upload error:",
+        "Model upload/analysis error:",
         error
       );
 
 
       next(
         new Error(
-          "Unable to store the model file. Please try again."
+          error.message ||
+          "Unable to analyse or store the model file. Please try again."
         )
       );
     }
@@ -1446,6 +2362,13 @@ app.post(
 
 /* =========================================================
    CREATE STRIPE CHECKOUT SESSION
+
+   IMPORTANT:
+   Stage 1 deliberately keeps the existing pricing.
+
+   Model measurements are now verified and stored,
+   but they are NOT yet used to calculate the
+   customer's Stripe price.
 ========================================================= */
 
 app.post(
@@ -1621,6 +2544,11 @@ app.post(
           );
 
 
+        /*
+          Stage 1:
+          Preserve the existing pricing formula.
+        */
+
         const unitPrice =
 
           basePrice *
@@ -1749,10 +2677,7 @@ app.post(
           JSON.stringify(
             orderItem
           );
-      }
-
-
-      /* =====================================================
+      }      /* =====================================================
          UK TRACKED DELIVERY
       ===================================================== */
 
@@ -1891,7 +2816,13 @@ app.get(
         "Layer3DPost",
 
       storage:
-        "Cloudflare R2"
+        "Cloudflare R2",
+
+      modelAnalysis:
+        "enabled",
+
+      maxModelDimensionMm:
+        MAX_MODEL_DIMENSION_MM
     });
   }
 );
