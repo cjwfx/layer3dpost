@@ -340,13 +340,13 @@ function calculateModelPrice(
 
 
   /*
-    £0.45 per cm³ of verified
+    £0.15 per cm³ of verified
     model mesh volume.
   */
 
   const volumeCharge =
     analysis.volumeCm3 *
-    0.45;
+    0.15;
 
 
   /*
