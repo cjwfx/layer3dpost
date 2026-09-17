@@ -2819,7 +2819,7 @@ app.post(
             9.95,
 
           volumeRatePerCm3:
-            0.45,
+            0.15
 
           volumeCharge:
             pricing.volumeCharge,
@@ -3391,7 +3391,7 @@ app.get(
         9.95,
 
       volumeRatePerCm3:
-        0.45,
+        0.15
 
       maxModelDimensionMm:
         MAX_MODEL_DIMENSION_MM
