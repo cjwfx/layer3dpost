@@ -136,8 +136,8 @@ h1 span {
 }
 
 .button:disabled {
-  opacity: .65;
-  cursor: wait;
+  opacity: .55;
+  cursor: not-allowed;
 }
 
 .secondary {
@@ -252,6 +252,56 @@ section {
   max-width: 100%;
 }
 
+/* MODEL ANALYSIS STATUS */
+
+.model-analysis {
+  display: none;
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 10px;
+  text-align: left;
+}
+
+.model-analysis.loading {
+  display: block;
+  background: #171d19;
+  border: 1px solid #354139;
+  color: #d9dfdb;
+}
+
+.model-analysis.success {
+  display: block;
+  background: #132318;
+  border: 1px solid #2f6b3d;
+  color: #dfffe7;
+}
+
+.model-analysis.error {
+  display: block;
+  background: #291616;
+  border: 1px solid #743838;
+  color: #ffdede;
+}
+
+.model-analysis-title {
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.model-analysis-details {
+  color: #b6c2ba;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.model-analysis.success .model-analysis-title {
+  color: #68e98e;
+}
+
+.model-analysis.error .model-analysis-title {
+  color: #ff9b9b;
+}
+
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -319,23 +369,13 @@ footer {
   text-align: center;
 }
 
-.footer-links {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 10px 18px;
-  margin: 16px 0;
-}
-
-.footer-links a,
-.footer-email {
-  color: #aeb7b1;
+footer a {
+  color: #aab3ad;
   text-decoration: none;
 }
 
-.footer-links a:hover,
-.footer-email:hover {
-  color: #65e68b;
+footer a:hover {
+  color: #68e98e;
 }
 
 /* PAYMENT RETURN MESSAGE */
@@ -426,6 +466,12 @@ footer {
   margin-top: 5px;
 }
 
+.basket-model-details {
+  color: #7f9185;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
 .basket-price-area {
   text-align: right;
   flex-shrink: 0;
@@ -461,6 +507,7 @@ footer {
 /* MOBILE */
 
 @media (max-width: 760px) {
+
   header {
     padding: 17px 5%;
     flex-wrap: wrap;
@@ -510,6 +557,7 @@ footer {
 }
 
 @media (max-width: 500px) {
+
   .cards,
   .steps {
     grid-template-columns: 1fr;
@@ -544,6 +592,7 @@ footer {
     margin: 20px auto;
   }
 }
+
 </style>
 </head>
 
@@ -552,6 +601,7 @@ footer {
 <div id="paymentMessage"></div>
 
 <header>
+
   <div class="logo">
     Layer<span>3D</span>Post
   </div>
@@ -569,6 +619,7 @@ footer {
   >
     🛒 Basket (<span id="basketCount">0</span>)
   </button>
+
 </header>
 
 <main>
@@ -615,56 +666,114 @@ footer {
     </div>
 
   </div>
+
 </div>
 
 <section id="materials">
 
   <div class="section-title">
-    <h2>Choose your material</h2>
-    <p>From prototypes to tougher functional parts.</p>
+
+    <h2>
+      Choose your material
+    </h2>
+
+    <p>
+      From prototypes to tougher functional parts.
+    </p>
+
   </div>
 
   <div class="cards">
 
     <div class="card">
-      <div class="icon">⬡</div>
-      <h3>PLA</h3>
-      <p>Excellent for prototypes, models and everyday parts.</p>
+
+      <div class="icon">
+        ⬡
+      </div>
+
+      <h3>
+        PLA
+      </h3>
+
+      <p>
+        Excellent for prototypes, models and everyday parts.
+      </p>
+
     </div>
 
     <div class="card">
-      <div class="icon">◆</div>
-      <h3>PETG</h3>
-      <p>Durable with improved heat and moisture resistance.</p>
+
+      <div class="icon">
+        ◆
+      </div>
+
+      <h3>
+        PETG
+      </h3>
+
+      <p>
+        Durable with improved heat and moisture resistance.
+      </p>
+
     </div>
 
     <div class="card">
-      <div class="icon">〰</div>
-      <h3>TPU</h3>
-      <p>Flexible material for grips, covers and compliant parts.</p>
+
+      <div class="icon">
+        〰
+      </div>
+
+      <h3>
+        TPU
+      </h3>
+
+      <p>
+        Flexible material for grips, covers and compliant parts.
+      </p>
+
     </div>
 
     <div class="card">
-      <div class="icon">◈</div>
-      <h3>PLA-CF</h3>
-      <p>Carbon-fibre reinforced PLA with a premium technical finish.</p>
+
+      <div class="icon">
+        ◈
+      </div>
+
+      <h3>
+        PLA-CF
+      </h3>
+
+      <p>
+        Carbon-fibre reinforced PLA with a premium technical finish.
+      </p>
+
     </div>
 
   </div>
+
 </section>
 
 <section id="quote">
 
   <div class="section-title">
-    <h2>Get an instant price</h2>
-    <p>Upload your model and configure your print.</p>
+
+    <h2>
+      Get an instant price
+    </h2>
+
+    <p>
+      Upload your model and configure your print.
+    </p>
+
   </div>
 
   <div class="quote">
 
     <div class="upload">
 
-      <h3>Upload your 3D model</h3>
+      <h3>
+        Upload your 3D model
+      </h3>
 
       <p>
         STL or 3MF · Maximum file size 100 MB · Maximum print size 256 × 256 × 256 mm
@@ -676,52 +785,102 @@ footer {
         accept=".stl,.3mf"
       >
 
+      <div
+        id="modelAnalysis"
+        class="model-analysis"
+      >
+      </div>
+
     </div>
 
     <div class="grid">
 
       <div>
+
         <label>
+
           Material
 
           <select id="material">
-            <option value="1">PLA</option>
-            <option value="1.25">PETG</option>
-            <option value="1.45">TPU</option>
-            <option value="1.6">PLA-CF</option>
+
+            <option value="1">
+              PLA
+            </option>
+
+            <option value="1.25">
+              PETG
+            </option>
+
+            <option value="1.45">
+              TPU
+            </option>
+
+            <option value="1.6">
+              PLA-CF
+            </option>
+
           </select>
 
         </label>
+
       </div>
 
       <div>
+
         <label>
+
           Colour
 
           <select id="colour">
-            <option>Black</option>
-            <option>White</option>
-            <option>Other colour — subject to availability</option>
+
+            <option>
+              Black
+            </option>
+
+            <option>
+              White
+            </option>
+
+            <option>
+              Other colour — subject to availability
+            </option>
+
           </select>
 
         </label>
+
       </div>
 
       <div>
+
         <label>
+
           Quality
 
           <select id="quality">
-            <option value="1">Standard</option>
-            <option value="1.25">Fine</option>
-            <option value="1.5">High detail</option>
+
+            <option value="1">
+              Standard
+            </option>
+
+            <option value="1.25">
+              Fine
+            </option>
+
+            <option value="1.5">
+              High detail
+            </option>
+
           </select>
 
         </label>
+
       </div>
 
       <div>
+
         <label>
+
           Quantity
 
           <input
@@ -733,6 +892,7 @@ footer {
           >
 
         </label>
+
       </div>
 
     </div>
@@ -746,7 +906,11 @@ footer {
         </small>
 
         <div>
-          <strong id="price">£9.95</strong>
+
+          <strong id="price">
+            £9.95
+          </strong>
+
         </div>
 
       </div>
@@ -756,8 +920,9 @@ footer {
         id="continueButton"
         class="button"
         onclick="addToBasket()"
+        disabled
       >
-        Add to basket →
+        Upload model first
       </button>
 
     </div>
@@ -768,36 +933,68 @@ footer {
     </p>
 
   </div>
-</section>
 
+</section>
 <section id="how">
 
   <div class="section-title">
-    <h2>From file to front door</h2>
-    <p>A straightforward UK 3D printing service.</p>
+
+    <h2>
+      From file to front door
+    </h2>
+
+    <p>
+      A straightforward UK 3D printing service.
+    </p>
+
   </div>
 
   <div class="steps">
 
     <div class="step">
+
       <b>01</b>
-      <h3>Upload</h3>
-      <p>Send us your STL or 3MF model.</p>
+
+      <h3>
+        Upload
+      </h3>
+
+      <p>
+        Send us your STL or 3MF model.
+      </p>
+
     </div>
 
     <div class="step">
+
       <b>02</b>
-      <h3>We print</h3>
-      <p>Your order is prepared and professionally 3D printed.</p>
+
+      <h3>
+        We print
+      </h3>
+
+      <p>
+        Your order is prepared and professionally 3D printed.
+      </p>
+
     </div>
 
     <div class="step">
+
       <b>03</b>
-      <h3>We deliver</h3>
-      <p>Your finished parts are packed and dispatched within the UK.</p>
+
+      <h3>
+        We deliver
+      </h3>
+
+      <p>
+        Your finished parts are packed and dispatched within the UK.
+      </p>
+
     </div>
 
   </div>
+
 </section>
 
 </main>
@@ -808,23 +1005,37 @@ footer {
     Layer3DPost
   </strong>
 
-  <div class="footer-links">
-    <a href="/terms.html">Terms &amp; Conditions</a>
-    <a href="/privacy.html">Privacy Policy</a>
-    <a href="/delivery-returns.html">Delivery &amp; Returns</a>
-    <a href="mailto:Layer3dpost@outlook.com">Contact</a>
-  </div>
+  <br><br>
 
   Layer3DPost is a trading name of CJ FX Limited
   · Company No. 09621949
 
   <br>
 
-  <a
-    class="footer-email"
-    href="mailto:Layer3dpost@outlook.com"
-  >
-    Layer3dpost@outlook.com
+  Layer3dpost@outlook.com
+
+  <br><br>
+
+  <a href="/terms.html">
+    Terms &amp; Conditions
+  </a>
+
+  &nbsp; · &nbsp;
+
+  <a href="/privacy.html">
+    Privacy Policy
+  </a>
+
+  &nbsp; · &nbsp;
+
+  <a href="/delivery-returns.html">
+    Delivery &amp; Returns
+  </a>
+
+  &nbsp; · &nbsp;
+
+  <a href="mailto:Layer3dpost@outlook.com">
+    Contact
   </a>
 
   <br><br>
@@ -832,6 +1043,7 @@ footer {
   © 2026 CJ FX Limited. All rights reserved.
 
 </footer>
+
 
 <!-- BASKET -->
 
@@ -841,7 +1053,9 @@ footer {
 
     <div class="basket-header">
 
-      <h2>Your basket</h2>
+      <h2>
+        Your basket
+      </h2>
 
       <button
         type="button"
@@ -861,7 +1075,9 @@ footer {
 
     <div class="basket-total">
 
-      <strong>Print subtotal</strong>
+      <strong>
+        Print subtotal
+      </strong>
 
       <strong id="basketTotal">
         £0.00
@@ -883,7 +1099,9 @@ footer {
     </button>
 
   </div>
+
 </div>
+
 
 <script>
 
@@ -896,55 +1114,118 @@ let basket = [];
 try {
 
   const savedBasket =
-    localStorage.getItem("layer3dpostBasket");
+    localStorage.getItem(
+      "layer3dpostBasket"
+    );
 
   if (savedBasket) {
-    basket = JSON.parse(savedBasket);
+
+    basket =
+      JSON.parse(
+        savedBasket
+      );
   }
 
-  if (!Array.isArray(basket)) {
+  if (
+    !Array.isArray(
+      basket
+    )
+  ) {
+
     basket = [];
   }
 
 }
+
 catch (error) {
+
   basket = [];
 }
+
 
 function saveBasket() {
 
   localStorage.setItem(
     "layer3dpostBasket",
-    JSON.stringify(basket)
+    JSON.stringify(
+      basket
+    )
   );
-
 }
 
 
 /* ----------------------------------------
+   CURRENT VERIFIED MODEL
+
+   This is populated only after the
+   server successfully analyses and
+   stores the selected model.
+---------------------------------------- */
+
+let currentModel = null;
+
+let uploadSequence = 0;
+
+
+/* ----------------------------------------
    PRICE CALCULATOR
+
+   Stage 1 deliberately keeps the
+   existing £9.95 pricing system.
+
+   Geometry will be connected to
+   pricing only after we verify the
+   analyser with real models.
 ---------------------------------------- */
 
 function calculateCurrentPrice() {
 
   const material =
-    Number(document.getElementById("material").value);
+    Number(
+      document
+        .getElementById(
+          "material"
+        )
+        .value
+    );
+
 
   const quality =
-    Number(document.getElementById("quality").value);
+    Number(
+      document
+        .getElementById(
+          "quality"
+        )
+        .value
+    );
+
 
   const quantity =
     Math.max(
       1,
-      Number(
-        document.getElementById("quantity").value
-      ) || 1
+      Math.min(
+        100,
+        Number(
+          document
+            .getElementById(
+              "quantity"
+            )
+            .value
+        ) || 1
+      )
     );
 
-  const basePrice = 9.95;
 
-  return basePrice * material * quality * quantity;
+  const basePrice =
+    9.95;
 
+
+  return (
+    basePrice *
+    material *
+    quality *
+    quantity
+  );
 }
 
 
@@ -953,30 +1234,41 @@ function updatePrice() {
   const price =
     calculateCurrentPrice();
 
-  document
-    .getElementById("price")
-    .textContent =
-    "£" + price.toFixed(2);
 
+  document
+    .getElementById(
+      "price"
+    )
+    .textContent =
+      "£" +
+      price.toFixed(2);
 }
 
 
 document
-  .getElementById("material")
+  .getElementById(
+    "material"
+  )
   .addEventListener(
     "change",
     updatePrice
   );
 
+
 document
-  .getElementById("quality")
+  .getElementById(
+    "quality"
+  )
   .addEventListener(
     "change",
     updatePrice
   );
 
+
 document
-  .getElementById("quantity")
+  .getElementById(
+    "quantity"
+  )
   .addEventListener(
     "input",
     updatePrice
@@ -984,151 +1276,463 @@ document
 
 
 /* ----------------------------------------
-   ADD PART TO BASKET
+   MODEL ANALYSIS DISPLAY
 ---------------------------------------- */
 
-async function addToBasket() {
+function resetModelAnalysis() {
 
-  const fileInput =
-    document.getElementById("file");
+  currentModel = null;
 
-  const file =
-    fileInput.files[0];
 
-  if (!file) {
-
-    alert(
-      "Please upload your STL or 3MF file first."
+  const analysisBox =
+    document.getElementById(
+      "modelAnalysis"
     );
 
-    return;
 
-  }
+  analysisBox.className =
+    "model-analysis";
 
-  const filename =
-    file.name.toLowerCase();
+  analysisBox.innerHTML =
+    "";
 
-  if (
-    !filename.endsWith(".stl") &&
-    !filename.endsWith(".3mf")
-  ) {
-
-    alert(
-      "Only STL and 3MF files are accepted."
-    );
-
-    fileInput.value = "";
-
-    return;
-
-  }
-
-  if (file.size > 100 * 1024 * 1024) {
-
-    alert(
-      "The maximum upload size is 100 MB."
-    );
-
-    fileInput.value = "";
-
-    return;
-
-  }
 
   const button =
     document.getElementById(
       "continueButton"
     );
 
-  button.disabled = true;
+
+  button.disabled =
+    true;
 
   button.textContent =
-    "Uploading...";
+    "Upload model first";
+}
+
+
+function showAnalysisLoading(
+  filename
+) {
+
+  const analysisBox =
+    document.getElementById(
+      "modelAnalysis"
+    );
+
+
+  analysisBox.className =
+    "model-analysis loading";
+
+
+  analysisBox.innerHTML =
+
+    '<div class="model-analysis-title">' +
+
+      'Analysing model…' +
+
+    '</div>' +
+
+    '<div class="model-analysis-details">' +
+
+      escapeHtml(
+        filename
+      ) +
+
+      '<br>' +
+
+      'Checking dimensions and geometry.' +
+
+    '</div>';
+}
+
+
+function showAnalysisError(
+  message
+) {
+
+  const analysisBox =
+    document.getElementById(
+      "modelAnalysis"
+    );
+
+
+  analysisBox.className =
+    "model-analysis error";
+
+
+  analysisBox.innerHTML =
+
+    '<div class="model-analysis-title">' +
+
+      'Model could not be accepted' +
+
+    '</div>' +
+
+    '<div class="model-analysis-details">' +
+
+      escapeHtml(
+        message
+      ) +
+
+    '</div>';
+
+
+  const button =
+    document.getElementById(
+      "continueButton"
+    );
+
+
+  button.disabled =
+    true;
+
+  button.textContent =
+    "Upload model first";
+}
+
+
+function showAnalysisSuccess(
+  result
+) {
+
+  const analysis =
+    result.analysis;
+
+
+  const dimensions =
+    analysis.dimensions;
+
+
+  const x =
+    Number(
+      dimensions.x
+    );
+
+
+  const y =
+    Number(
+      dimensions.y
+    );
+
+
+  const z =
+    Number(
+      dimensions.z
+    );
+
+
+  const volume =
+    Number(
+      analysis.volumeCm3
+    );
+
+
+  const triangleCount =
+    Number(
+      analysis.triangleCount
+    );
+
+
+  const analysisBox =
+    document.getElementById(
+      "modelAnalysis"
+    );
+
+
+  analysisBox.className =
+    "model-analysis success";
+
+
+  analysisBox.innerHTML =
+
+    '<div class="model-analysis-title">' +
+
+      '✓ Model analysed' +
+
+    '</div>' +
+
+    '<div class="model-analysis-details">' +
+
+      '<strong>File:</strong> ' +
+
+      escapeHtml(
+        result.filename
+      ) +
+
+      '<br>' +
+
+      '<strong>Size:</strong> ' +
+
+      x.toFixed(2) +
+
+      ' × ' +
+
+      y.toFixed(2) +
+
+      ' × ' +
+
+      z.toFixed(2) +
+
+      ' mm' +
+
+      '<br>' +
+
+      '<strong>Mesh volume:</strong> ' +
+
+      volume.toFixed(3) +
+
+      ' cm³' +
+
+      '<br>' +
+
+      '<strong>Triangles:</strong> ' +
+
+      triangleCount.toLocaleString() +
+
+    '</div>';
+
+
+  const button =
+    document.getElementById(
+      "continueButton"
+    );
+
+
+  button.disabled =
+    false;
+
+  button.textContent =
+    "Add to basket →";
+}
+
+
+/* ----------------------------------------
+   AUTOMATIC MODEL UPLOAD + ANALYSIS
+---------------------------------------- */
+
+async function analyseSelectedModel() {
+
+  const fileInput =
+    document.getElementById(
+      "file"
+    );
+
+
+  const file =
+    fileInput.files[0];
+
+
+  /*
+    Incrementing this value prevents an
+    older upload response from replacing
+    a newer model if the customer changes
+    files quickly.
+  */
+
+  const thisUpload =
+    ++uploadSequence;
+
+
+  resetModelAnalysis();
+
+
+  if (!file) {
+
+    return;
+  }
+
+
+  const filename =
+    file.name.toLowerCase();
+
+
+  if (
+    !filename.endsWith(
+      ".stl"
+    ) &&
+    !filename.endsWith(
+      ".3mf"
+    )
+  ) {
+
+    showAnalysisError(
+      "Only STL and 3MF files are accepted."
+    );
+
+    fileInput.value =
+      "";
+
+    return;
+  }
+
+
+  if (
+    file.size >
+    100 *
+    1024 *
+    1024
+  ) {
+
+    showAnalysisError(
+      "The maximum upload size is 100 MB."
+    );
+
+    fileInput.value =
+      "";
+
+    return;
+  }
+
+
+  showAnalysisLoading(
+    file.name
+  );
+
+
+  const button =
+    document.getElementById(
+      "continueButton"
+    );
+
+
+  button.disabled =
+    true;
+
+  button.textContent =
+    "Analysing…";
+
 
   try {
 
     const formData =
       new FormData();
 
+
     formData.append(
       "model",
       file
     );
 
+
     const response =
       await fetch(
         "/api/upload",
         {
-          method: "POST",
-          body: formData
+          method:
+            "POST",
+
+          body:
+            formData
         }
       );
 
-    const result =
-      await response.json();
+
+    let result;
+
+
+    try {
+
+      result =
+        await response.json();
+
+    }
+
+    catch (error) {
+
+      throw new Error(
+        "The server returned an invalid response. Please try again."
+      );
+    }
+
+
+    /*
+      Ignore the result if another file
+      has been selected since this
+      request started.
+    */
+
+    if (
+      thisUpload !==
+      uploadSequence
+    ) {
+
+      return;
+    }
+
 
     if (!response.ok) {
 
       throw new Error(
         result.error ||
-        "Upload failed."
+        "The model could not be analysed."
       );
-
     }
 
-    const materialElement =
-      document.getElementById(
-        "material"
+
+    if (
+      !result.success ||
+      !result.uploadId ||
+      !result.analysis ||
+      !result.analysis.dimensions
+    ) {
+
+      throw new Error(
+        "The model analysis was incomplete. Please try the upload again."
+      );
+    }
+
+
+    const x =
+      Number(
+        result.analysis
+          .dimensions.x
       );
 
-    const qualityElement =
-      document.getElementById(
-        "quality"
+
+    const y =
+      Number(
+        result.analysis
+          .dimensions.y
       );
 
-    const colourElement =
-      document.getElementById(
-        "colour"
+
+    const z =
+      Number(
+        result.analysis
+          .dimensions.z
       );
 
-    const quantityElement =
-      document.getElementById(
-        "quantity"
+
+    const volume =
+      Number(
+        result.analysis
+          .volumeCm3
       );
 
-    const material =
-      materialElement
-        .options[
-          materialElement.selectedIndex
-        ]
-        .text;
 
-    const quality =
-      qualityElement
-        .options[
-          qualityElement.selectedIndex
-        ]
-        .text;
-
-    const colour =
-      colourElement
-        .options[
-          colourElement.selectedIndex
-        ]
-        .text;
-
-    const quantity =
-      Math.max(
-        1,
-        Number(
-          quantityElement.value
-        ) || 1
+    const triangles =
+      Number(
+        result.analysis
+          .triangleCount
       );
 
-    const price =
-      calculateCurrentPrice();
 
-    basket.push({
+    if (
+      !Number.isFinite(x) ||
+      !Number.isFinite(y) ||
+      !Number.isFinite(z) ||
+      !Number.isFinite(volume) ||
+      !Number.isFinite(triangles)
+    ) {
+
+      throw new Error(
+        "The server returned invalid model measurements."
+      );
+    }
+
+
+    currentModel = {
 
       uploadId:
         result.uploadId,
@@ -1136,57 +1740,232 @@ async function addToBasket() {
       filename:
         result.filename,
 
-      material:
-        material,
+      analysis: {
 
-      colour:
-        colour,
+        dimensions: {
 
-      quality:
-        quality,
+          x:
+            x,
 
-      quantity:
-        quantity,
+          y:
+            y,
 
-      price:
-        price
+          z:
+            z
+        },
 
-    });
+        volumeCm3:
+          volume,
 
-    saveBasket();
+        triangleCount:
+          triangles
+      }
+    };
 
-    updateBasket();
 
-    fileInput.value = "";
-
-    alert(
-      result.filename +
-      " has been added to your basket."
+    showAnalysisSuccess(
+      result
     );
 
   }
 
   catch (error) {
 
-    console.error(error);
+    if (
+      thisUpload !==
+      uploadSequence
+    ) {
 
-    alert(
+      return;
+    }
+
+
+    console.error(
+      error
+    );
+
+
+    currentModel =
+      null;
+
+
+    showAnalysisError(
       error.message ||
       "Upload failed. Please try again."
     );
 
   }
+}
 
-  finally {
 
-    button.disabled =
-      false;
+/*
+  Selecting a file now starts the
+  server upload immediately.
 
-    button.textContent =
-      "Add to basket →";
+  Customers no longer have to press
+  Add to basket before the server
+  checks their model.
+*/
 
+document
+  .getElementById(
+    "file"
+  )
+  .addEventListener(
+    "change",
+    analyseSelectedModel
+  );
+
+
+/* ----------------------------------------
+   ADD VERIFIED MODEL TO BASKET
+---------------------------------------- */
+
+function addToBasket() {
+
+  if (
+    !currentModel
+  ) {
+
+    alert(
+      "Please upload a model and wait for it to be analysed first."
+    );
+
+    return;
   }
 
+
+  const materialElement =
+    document.getElementById(
+      "material"
+    );
+
+
+  const qualityElement =
+    document.getElementById(
+      "quality"
+    );
+
+
+  const colourElement =
+    document.getElementById(
+      "colour"
+    );
+
+
+  const quantityElement =
+    document.getElementById(
+      "quantity"
+    );
+
+
+  const material =
+    materialElement
+      .options[
+        materialElement.selectedIndex
+      ]
+      .text;
+
+
+  const quality =
+    qualityElement
+      .options[
+        qualityElement.selectedIndex
+      ]
+      .text;
+
+
+  const colour =
+    colourElement
+      .options[
+        colourElement.selectedIndex
+      ]
+      .text;
+
+
+  const quantity =
+    Math.max(
+      1,
+      Math.min(
+        100,
+        Number(
+          quantityElement.value
+        ) || 1
+      )
+    );
+
+
+  quantityElement.value =
+    quantity;
+
+
+  const price =
+    calculateCurrentPrice();
+
+
+  basket.push({
+
+    uploadId:
+      currentModel.uploadId,
+
+    filename:
+      currentModel.filename,
+
+    material:
+      material,
+
+    colour:
+      colour,
+
+    quality:
+      quality,
+
+    quantity:
+      quantity,
+
+    price:
+      price,
+
+    analysis:
+      currentModel.analysis
+  });
+
+
+  saveBasket();
+
+  updateBasket();
+
+
+  const addedFilename =
+    currentModel.filename;
+
+
+  /*
+    Reset the uploader so the same
+    stored model cannot accidentally
+    be added again without the user
+    deliberately selecting a file.
+  */
+
+  currentModel =
+    null;
+
+
+  document
+    .getElementById(
+      "file"
+    )
+    .value =
+      "";
+
+
+  resetModelAnalysis();
+
+
+  alert(
+    addedFilename +
+    " has been added to your basket."
+  );
 }
 
 
@@ -1201,12 +1980,14 @@ function updateBasket() {
       "basketCount"
     )
     .textContent =
-    basket.length;
+      basket.length;
+
 
   const container =
     document.getElementById(
       "basketItems"
     );
+
 
   if (
     basket.length === 0
@@ -1215,21 +1996,85 @@ function updateBasket() {
     container.innerHTML =
       '<p style="color:#999">Your basket is empty.</p>';
 
+
     document
       .getElementById(
         "basketTotal"
       )
       .textContent =
-      "£0.00";
+        "£0.00";
+
 
     return;
-
   }
+
 
   container.innerHTML =
     basket
       .map(
-        function(item, index) {
+        function(
+          item,
+          index
+        ) {
+
+          let modelDetails =
+            "";
+
+
+          if (
+            item.analysis &&
+            item.analysis.dimensions
+          ) {
+
+            const dimensions =
+              item.analysis.dimensions;
+
+
+            modelDetails =
+
+              '<div class="basket-model-details">' +
+
+                Number(
+                  dimensions.x
+                ).toFixed(1) +
+
+                ' × ' +
+
+                Number(
+                  dimensions.y
+                ).toFixed(1) +
+
+                ' × ' +
+
+                Number(
+                  dimensions.z
+                ).toFixed(1) +
+
+                ' mm';
+                            if (
+              Number.isFinite(
+                Number(
+                  item.analysis.volumeCm3
+                )
+              )
+            ) {
+
+              modelDetails +=
+
+                ' · ' +
+
+                Number(
+                  item.analysis.volumeCm3
+                ).toFixed(2) +
+
+                ' cm³';
+            }
+
+
+            modelDetails +=
+              '</div>';
+          }
+
 
           return (
 
@@ -1269,6 +2114,8 @@ function updateBasket() {
 
                 '</div>' +
 
+                modelDetails +
+
               '</div>' +
 
               '<div class="basket-price-area">' +
@@ -1302,16 +2149,18 @@ function updateBasket() {
               '</div>' +
 
             '</div>'
-
           );
-
         }
       )
       .join("");
 
+
   const total =
     basket.reduce(
-      function(sum, item) {
+      function(
+        sum,
+        item
+      ) {
 
         return (
           sum +
@@ -1319,19 +2168,18 @@ function updateBasket() {
             item.price
           )
         );
-
       },
       0
     );
+
 
   document
     .getElementById(
       "basketTotal"
     )
     .textContent =
-    "£" +
-    total.toFixed(2);
-
+      "£" +
+      total.toFixed(2);
 }
 
 
@@ -1339,17 +2187,19 @@ function updateBasket() {
    REMOVE ITEM
 ---------------------------------------- */
 
-function removeBasketItem(index) {
+function removeBasketItem(
+  index
+) {
 
   basket.splice(
     index,
     1
   );
 
+
   saveBasket();
 
   updateBasket();
-
 }
 
 
@@ -1361,13 +2211,13 @@ function openBasket() {
 
   updateBasket();
 
+
   document
     .getElementById(
       "basketPanel"
     )
     .style.display =
-    "block";
-
+      "block";
 }
 
 
@@ -1378,8 +2228,7 @@ function closeBasket() {
       "basketPanel"
     )
     .style.display =
-    "none";
-
+      "none";
 }
 
 
@@ -1392,11 +2241,12 @@ document
     function(event) {
 
       if (
-        event.target === this
+        event.target ===
+        this
       ) {
+
         closeBasket();
       }
-
     }
   );
 
@@ -1416,19 +2266,22 @@ async function basketCheckout() {
     );
 
     return;
-
   }
+
 
   const checkoutButton =
     document.getElementById(
       "checkoutButton"
     );
 
+
   checkoutButton.disabled =
     true;
 
+
   checkoutButton.textContent =
     "Opening secure checkout...";
+
 
   try {
 
@@ -1436,22 +2289,29 @@ async function basketCheckout() {
       await fetch(
         "/api/create-checkout-session",
         {
-          method: "POST",
+
+          method:
+            "POST",
 
           headers: {
+
             "Content-Type":
               "application/json"
           },
 
           body:
             JSON.stringify({
-              basket: basket
+
+              basket:
+                basket
             })
         }
       );
 
+
     const result =
       await response.json();
+
 
     if (!response.ok) {
 
@@ -1459,16 +2319,16 @@ async function basketCheckout() {
         result.error ||
         "Unable to start checkout."
       );
-
     }
+
 
     if (!result.url) {
 
       throw new Error(
         "Stripe checkout URL was not returned."
       );
-
     }
+
 
     window.location.href =
       result.url;
@@ -1477,21 +2337,24 @@ async function basketCheckout() {
 
   catch (error) {
 
-    console.error(error);
+    console.error(
+      error
+    );
+
 
     alert(
       error.message ||
       "Unable to start checkout. Please try again."
     );
 
+
     checkoutButton.disabled =
       false;
 
+
     checkoutButton.textContent =
       "Checkout securely →";
-
   }
-
 }
 
 
@@ -1506,65 +2369,94 @@ function handlePaymentReturn() {
       window.location.search
     );
 
+
   const payment =
-    params.get("payment");
+    params.get(
+      "payment"
+    );
+
 
   if (!payment) {
+
     return;
   }
+
 
   const box =
     document.getElementById(
       "paymentMessage"
     );
 
+
   if (
-    payment === "success"
+    payment ===
+    "success"
   ) {
 
     box.style.display =
       "block";
 
+
     box.innerHTML =
+
       '<div class="payment-message-box payment-success">' +
+
         '<h2>Payment successful</h2>' +
+
         '<p>Thank you for your order. We’ve sent your order confirmation by email and will begin preparing your print.</p>' +
+
       '</div>';
 
+
     basket = [];
+
 
     saveBasket();
 
     updateBasket();
-
   }
 
+
   if (
-    payment === "cancelled"
+    payment ===
+    "cancelled"
   ) {
 
     box.style.display =
       "block";
 
-    box.innerHTML =
-      '<div class="payment-message-box payment-cancelled">' +
-        '<h2>Checkout cancelled</h2>' +
-        '<p>No payment was completed. Your basket is still available.</p>' +
-      '</div>';
 
+    box.innerHTML =
+
+      '<div class="payment-message-box payment-cancelled">' +
+
+        '<h2>Checkout cancelled</h2>' +
+
+        '<p>No payment was completed. Your basket is still available.</p>' +
+
+      '</div>';
   }
 
-  window.history.replaceState(
-    {},
-    document.title,
-    window.location.pathname
-  );
+
+  window.history
+    .replaceState(
+
+      {},
+
+      document.title,
+
+      window.location.pathname
+    );
+
 
   window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
 
+    top:
+      0,
+
+    behavior:
+      "smooth"
+  });
 }
 
 
@@ -1572,9 +2464,13 @@ function handlePaymentReturn() {
    SAFE TEXT OUTPUT
 ---------------------------------------- */
 
-function escapeHtml(value) {
+function escapeHtml(
+  value
+) {
 
-  return String(value)
+  return String(
+    value
+  )
 
     .replaceAll(
       "&",
@@ -1600,7 +2496,6 @@ function escapeHtml(value) {
       "'",
       "&#039;"
     );
-
 }
 
 
@@ -1611,6 +2506,8 @@ function escapeHtml(value) {
 updatePrice();
 
 updateBasket();
+
+resetModelAnalysis();
 
 handlePaymentReturn();
 
